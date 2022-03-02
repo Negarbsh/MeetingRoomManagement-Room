@@ -7,3 +7,4 @@ def has_access(is_admin, action):
     if action == Action.get_rooms:
         return True
     return False
+
