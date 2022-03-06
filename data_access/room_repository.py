@@ -1,50 +1,62 @@
-from model.room import Room
-
-all_rooms = {}
-last_id = 0
+from data_access.initiate_db import get_database
+from model.feature import Feature
 
 
-def get_room_by_id(room_id):
-    return all_rooms[room_id]
+room_db = get_database()
+room_collection = room_db["rooms_collection"]
 
 
-def get_room_by_name(name):
-    for room in all_rooms.values():
-        if room.name == name:
-            return room
-    return None
+async def add_room(name, capacity, office, features):
+    room_collection.insert_one({
+        "name": name,
+        "capacity": capacity,
+        "office": office,
+        "features": {
+            "projector": Feature.projector in features,
+            "white_board": Feature.white_board in features,
+            "sound_proof": Feature.sound_proof in features
+        }
+    })
 
 
-def add_room(name, capacity, office, features):
-    global last_id
-    room = Room(last_id, name, capacity, office, features)
-    all_rooms[last_id] = room
-    last_id += 1
+async def get_room_by_room_id(room_id):
+    return room_collection.find({"_id": room_id})
 
 
-def delete_room(room_id, name):
-    if room_id is None:
-        room_id = get_room_by_name(name)
-    del all_rooms[room_id]
+async def get_room_by_name(name):
+    return await room_collection.find({"name": name})
 
 
-def update_room(room_id, new_name, new_capacity, new_office, new_features):
-    room = get_room_by_id(room_id)
+async def delete_room(room_id, name):
+    if room_id is not None:
+        room_collection.remove({"_id": room_id})
+    else:
+        room_collection.remove({"name": name})
+
+
+async def update_room(room_id, new_name, new_capacity, new_office, new_features):
     if new_name is not None:
-        room.name = new_name
+        room_collection.update_one({"_id": room_id}, {"$set": {"name": new_name}})
     if new_capacity is not None:
-        room.capacity = new_capacity
+        room_collection.update_one({"_id": room_id}, {"$set": {"capacity": new_capacity}})
     if new_office is not None:
-        room.office = new_office
+        room_collection.update_one({"_id": room_id}, {"$set": {"office": new_office}})
     if new_features is not None:
-        room.features = new_features
+        new_features_json = {
+            "projector": Feature.projector in new_features,
+            "white_board": Feature.white_board in new_features,
+            "sound_proof": Feature.sound_proof in new_features
+        }
+        room_collection.update_one({"_id": room_id}, {"$set": {"features": new_features_json}})
 
 
-def exists_room(name, room_id):
-    if room_id is None:
-        return get_room_by_name(name) is not None
-    return get_room_by_id(room_id) is not None
+async def exists_room(name, room_id):
+    if room_id is not None:
+        return room_collection.count({"_id": room_id}) > 0.
+    if name is not None:
+        return room_collection.count({"name": name}) > 0
+    return False
 
 
-def get_all_rooms():
-    return all_rooms
+async def get_all_rooms():
+    return room_collection.find()
