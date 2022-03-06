@@ -30,9 +30,9 @@ async def get_room_by_name(name):
 
 async def delete_room(room_id, name):
     if room_id is not None:
-        room_collection.remove({"_id": ObjectId(room_id)})
+        room_collection.delete_many({"_id": ObjectId(room_id)})
     else:
-        room_collection.remove({"name": name})
+        room_collection.delete_many({"name": name})
 
 
 def get_features(new_features):

@@ -17,7 +17,7 @@ def check_access(function):
 
 @check_access
 async def add_room(name, capacity, office, features):
-    if not room_repository.exists_room(name, None):
+    if not await room_repository.exists_room(name, None):
         await room_repository.add_room(name, capacity, office, features)
         return Response.created, 'room created'
     return Response.invalid_request, None
@@ -33,7 +33,7 @@ async def edit_room(room_id, new_name, capacity, office, features):
 
 @check_access
 async def delete_room(room_id):
-    if room_repository.exists_room(None, room_id):
+    if not await room_repository.exists_room(None, room_id):
         return Response.invalid_request, None
     await room_repository.delete_room(room_id, None)
     return Response.ok, 'room deleted'
