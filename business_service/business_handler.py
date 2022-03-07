@@ -1,7 +1,6 @@
 from business_service import access_manager
 from data_access import room_repository
 from model.response import Response
-from bson.json_util import dumps
 
 
 def check_access(function):
@@ -18,7 +17,7 @@ def check_access(function):
 @check_access
 async def add_room(name, capacity, office, features):
     if not await room_repository.exists_room(name, None):
-        await room_repository.add_room(name, capacity, office, features)
+        await room_repository.add_room(name, capacity, office, features)  # todo should we have the 'await'?
         return Response.created, 'room created'
     return Response.invalid_request, None
 
@@ -35,14 +34,13 @@ async def edit_room(room_id, new_name, capacity, office, features):
 async def delete_room(room_id):
     if not await room_repository.exists_room(None, room_id):
         return Response.invalid_request, None
-    await room_repository.delete_room(room_id, None)
+    await room_repository.delete_room(room_id, None)  # todo should we have the 'await'?
     return Response.ok, 'room deleted'
 
 
 @check_access
 async def get_rooms():
-    return Response.ok, dumps(list(await room_repository.get_all_rooms()), indent=2)
-    # todo the json dumps method should be called in another layer
+    return Response.ok, room_repository.get_all_rooms()
 
 # async def func():
 #     # return await get_rooms(Action.get_rooms, True)

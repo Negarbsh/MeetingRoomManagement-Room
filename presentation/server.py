@@ -5,6 +5,7 @@ import json
 
 from controller import request_handler
 from model.response import Response
+from token_docoder import decode_token
 
 PORT = 8000
 
@@ -52,11 +53,13 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
 
         print(input_data)
 
-        # todo decode token
-        #  see if the user is the admin
-        decoded_token = {
-            'is_admin': True
-        }
+        encode_token = self.headers['token']
+        decoded_token = decode_token(encode_token)
+        print('token : ' + str(decoded_token))
+
+        if decoded_token is None:
+            send_response(self, Response.access_forbidden, 'Invalid token.')
+            return
 
         if 'method' not in input_data:
             send_response(self, Response.invalid_request, 'Field "method" not specified!')

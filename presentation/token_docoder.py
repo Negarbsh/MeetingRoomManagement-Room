@@ -1,8 +1,14 @@
+import jwt
 
-def decode_token(input_data):
-    pass
 
-#
+def decode_token(encoded_token):
+    token_key = 'Negar'  # todo
+    try:
+        return jwt.decode(encoded_token, token_key, algorithms="HS256")
+    except BaseException as e:
+        print(e)
+        return None
+
 # function decode_token(req) {
 #     const token = req.header('token')
 #     let decoded_token
@@ -16,3 +22,4 @@ def decode_token(input_data):
 #         return null
 #     }
 # }
+
