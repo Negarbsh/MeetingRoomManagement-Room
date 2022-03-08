@@ -2,6 +2,7 @@ import enum
 
 
 class Response(enum.Enum):
+    unauthorized = 401
     access_forbidden = 403
     invalid_request = 406
     ok = 200

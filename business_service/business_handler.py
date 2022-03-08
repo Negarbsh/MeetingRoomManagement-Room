@@ -15,39 +15,29 @@ def check_access(function):
 
 
 @check_access
-async def add_room(name, capacity, office, features):
-    if not await room_repository.exists_room(name, None):
-        await room_repository.add_room(name, capacity, office, features)  # todo should we have the 'await'?
-        return Response.created, 'room created'
-    return Response.invalid_request, None
+async def add_room(room):
+    if not await room_repository.exists_room(room.name, None):
+        await room_repository.add_room(room)  # todo should we have the 'await'?
+        return Response.created, 'Room created.'
+    return Response.invalid_request, "Room with this name already exists."
 
 
 @check_access
-async def edit_room(room_id, new_name, capacity, office, features):
+async def edit_room(room_id, new_room):
     if not await room_repository.exists_room(None, room_id):
-        return Response.invalid_request, None
-    await room_repository.update_room(room_id, new_name, capacity, office, features)
-    return Response.updated, 'room updated'
+        return Response.invalid_request, "No room with this name exists."
+    await room_repository.update_room(room_id, new_room)
+    return Response.updated, 'Room updated.'
 
 
 @check_access
 async def delete_room(room_id):
     if not await room_repository.exists_room(None, room_id):
-        return Response.invalid_request, None
+        return Response.invalid_request, "No room with this name exists."
     await room_repository.delete_room(room_id, None)  # todo should we have the 'await'?
-    return Response.ok, 'room deleted'
+    return Response.ok, 'Room deleted.'
 
 
 @check_access
 async def get_rooms():
-    return Response.ok, room_repository.get_all_rooms()
-
-# async def func():
-#     # return await get_rooms(Action.get_rooms, True)
-#     return await edit_room(Action.modify_room, True, "622342b721c3b3c1d72fdc1c", "room one", None, "The Tehran!", None)
-#
-# loop = asyncio.new_event_loop()
-# asyncio.set_event_loop(loop)
-# result, message = loop.run_until_complete(func())
-#
-# print(message)
+    return Response.ok, await room_repository.get_all_rooms()

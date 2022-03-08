@@ -1,10 +1,11 @@
 import unittest
 
+from business_service import business_handler
+from model.action import Action
+
 
 class TestBusiness(unittest.TestCase):
-    pass
-    # def test_sum(self):
-    #     self.assertEqual(sum([1, 2, 3]), 6, "Should be 6")
-    #
-    # def test_sum_tuple(self):
-    #     self.assertEqual(sum((1, 2, 2)), 6, "Should be 6")
+
+    def test_add_room(self):
+        # response = business_handler.add_room(Action.add_room, False, 'room 46',)
+        pass

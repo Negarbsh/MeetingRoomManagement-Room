@@ -2,6 +2,6 @@ import enum
 
 
 class Feature(enum.Enum):
-    projector = 1
-    white_board = 2
-    sound_proof = 3
+    PROJECTOR = 'projector'
+    WHITE_BOARD = 'white_board'
+    SOUND_PROOF = 'sound_proof'

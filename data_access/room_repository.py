@@ -7,11 +7,12 @@ room_db = get_database()
 room_collection = room_db["rooms_collection"]
 
 
-async def add_room(name, capacity, office, features):
+async def add_room(room):
+    features = room.features
     room_collection.insert_one({
-        "name": name,
-        "capacity": capacity,
-        "office": office,
+        "name": room.name,
+        "capacity": room.capacity,
+        "office": room.office,
         "features": {
             "projector": Feature.projector in features,
             "white_board": Feature.white_board in features,
@@ -37,21 +38,21 @@ async def delete_room(room_id, name):
 
 def get_features(new_features):
     return {
-        "projector": Feature.projector in new_features,
-        "white_board": Feature.white_board in new_features,
-        "sound_proof": Feature.sound_proof in new_features
+        "projector": Feature.PROJECTOR in new_features,
+        "white_board": Feature.WHITE_BOARD in new_features,
+        "sound_proof": Feature.SOUND_PROOF in new_features
     }
 
 
-async def update_room(room_id, new_name, new_capacity, new_office, new_features):
-    if new_name is not None:
-        room_collection.update_one({"_id": ObjectId(room_id)}, {"$set": {"name": new_name}})
-    if new_capacity is not None:
-        room_collection.update_one({"_id": ObjectId(room_id)}, {"$set": {"capacity": new_capacity}})
-    if new_office is not None:
-        room_collection.update_one({"_id": ObjectId(room_id)}, {"$set": {"office": new_office}})
-    if new_features is not None:
-        new_features_json = get_features(new_features)
+async def update_room(room_id, new_room):
+    if new_room.name is not None:
+        room_collection.update_one({"_id": ObjectId(room_id)}, {"$set": {"name": new_room.name}})
+    if new_room.capacity is not None:
+        room_collection.update_one({"_id": ObjectId(room_id)}, {"$set": {"capacity": new_room.capacity}})
+    if new_room.office is not None:
+        room_collection.update_one({"_id": ObjectId(room_id)}, {"$set": {"office": new_room.office}})
+    if new_room.features is not None:
+        new_features_json = get_features(new_room.features)
         room_collection.update_one({"_id": ObjectId(room_id)}, {"$set": {"features": new_features_json}})
 
 
