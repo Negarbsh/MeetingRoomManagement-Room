@@ -4,6 +4,7 @@ from bson import json_util
 
 from model.action import Action
 from business_service import business_handler
+from model.office import get_office_key
 from model.response import Response
 from model.room import Room
 
@@ -33,7 +34,12 @@ async def get_all(input_data, is_admin):
 async def update(input_data, is_admin, room_id):
     name = input_data.get('name')
     capacity = input_data.get('capacity')
-    office = input_data.get('office')
+    input_office = input_data.get('office')
+    office = None
+    if input_office is not None:
+        office = get_office_key(input_office)
+        if office is None:
+            return Response.invalid_request, 'Invalid office field.'
     features = None
     if input_data.get('features') is not None:
         features = json.dumps(input_data.get('features'))
@@ -58,7 +64,11 @@ async def create(input_data, is_admin):
         return Response.invalid_request, "All fields 'name', 'capacity', 'office' and 'features' should be given"
     name = input_data.get('name')
     capacity = input_data.get('capacity')
-    office = input_data.get('office')
+    input_office = input_data.get('office')
+    office = get_office_key(input_office)
+    if office is None:
+        return Response.invalid_request, 'Invalid office field.'
+
     features = input_data.get('features')
     # todo check the datatypes
     room = Room(name, capacity, office, features)

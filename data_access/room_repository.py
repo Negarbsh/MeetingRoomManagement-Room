@@ -14,9 +14,9 @@ async def add_room(room):
         "capacity": room.capacity,
         "office": room.office,
         "features": {
-            "projector": Feature.projector in features,
-            "white_board": Feature.white_board in features,
-            "sound_proof": Feature.sound_proof in features
+            "projector": Feature.PROJECTOR in features,
+            "white_board": Feature.WHITE_BOARD in features,
+            "sound_proof": Feature.SOUND_PROOF in features
         }
     })
 
@@ -38,9 +38,9 @@ async def delete_room(room_id, name):
 
 def get_features(new_features):
     return {
-        "projector": Feature.PROJECTOR in new_features,
-        "white_board": Feature.WHITE_BOARD in new_features,
-        "sound_proof": Feature.SOUND_PROOF in new_features
+        "projector": Feature.PROJECTOR.value in new_features,
+        "white_board": Feature.WHITE_BOARD.value in new_features,
+        "sound_proof": Feature.SOUND_PROOF.value in new_features
     }
 
 
@@ -56,7 +56,7 @@ async def update_room(room_id, new_room):
         room_collection.update_one({"_id": ObjectId(room_id)}, {"$set": {"features": new_features_json}})
 
 
-async def exists_room(name, room_id):
+async def exists_room(name, room_id) -> bool:
     if room_id is not None:
         return room_collection.count_documents({"_id": ObjectId(room_id)}, skip=0) > 0
     if name is not None:
