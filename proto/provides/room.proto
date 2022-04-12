@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package roomPackage;
+
+service Room{
+  rpc GetCapacity(RoomIdRequest) returns (RoomCapacity){}
+}
+
+message RoomIdRequest {
+  int64 id = 1;
+}
+
+message RoomCapacity {
+  int32 capacity = 1;
+}

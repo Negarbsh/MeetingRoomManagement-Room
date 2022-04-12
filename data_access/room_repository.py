@@ -50,7 +50,7 @@ async def update_room(room_id, new_room):
     if new_room.capacity is not None:
         room_collection.update_one({"_id": ObjectId(room_id)}, {"$set": {"capacity": new_room.capacity}})
     if new_room.office is not None:
-        room_collection.update_one({"_id": ObjectId(room_id)}, {"$set": {"office": new_room.office}})
+        room_collection.update_one({"_id": ObjectId(room_id)}, {"$set": {"office": new_room.office.value}})
     if new_room.features is not None:
         new_features_json = get_features(new_room.features)
         room_collection.update_one({"_id": ObjectId(room_id)}, {"$set": {"features": new_features_json}})
